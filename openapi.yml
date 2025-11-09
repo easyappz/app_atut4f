@@ -11,8 +11,6 @@ paths:
       tags:
       - api
       security:
-      - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
@@ -21,6 +19,109 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
           description: ''
+  /api/register/:
+    post:
+      operationId: api_register_create
+      description: Register a new user
+      tags:
+      - api
+      security:
+      - {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserProfile'
+                  access:
+                    type: string
+                  refresh:
+                    type: string
+          description: ''
+        '400':
+          description: Bad request
+  /api/login/:
+    post:
+      operationId: api_login_create
+      description: Login user with email and password
+      tags:
+      - api
+      security:
+      - {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserProfile'
+                  access:
+                    type: string
+                  refresh:
+                    type: string
+          description: ''
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /api/profile/:
+    get:
+      operationId: api_profile_retrieve
+      description: Get current user profile
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+        '401':
+          description: Unauthorized
+    put:
+      operationId: api_profile_update
+      description: Update current user profile
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
 components:
   schemas:
     Message:
@@ -36,11 +137,84 @@ components:
       required:
       - message
       - timestamp
+    UserRegistration:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - first_name
+      - last_name
+      - password
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - date_joined
+    UserProfileUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - first_name
+      - last_name
   securitySchemes:
-    basicAuth:
+    jwtAuth:
       type: http
-      scheme: basic
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: sessionid
+      scheme: bearer
+      bearerFormat: JWT
