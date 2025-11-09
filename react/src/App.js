@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 import ruRU from 'antd/locale/ru_RU';
 import ErrorBoundary from './ErrorBoundary';
 import Navbar from './components/Navbar';
@@ -10,6 +10,8 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import './App.css';
+
+const { Content } = Layout;
 
 function App() {
   useEffect(() => {
@@ -22,22 +24,24 @@ function App() {
     <ErrorBoundary>
       <ConfigProvider locale={ruRU}>
         <Router>
-          <div data-easytag="id1-react/src/App.js" className="App">
+          <Layout data-easytag="id1-react/src/App.js" className="App">
             <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route 
-                path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } 
-              />
-            </Routes>
-          </div>
+            <Content>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } 
+                />
+              </Routes>
+            </Content>
+          </Layout>
         </Router>
       </ConfigProvider>
     </ErrorBoundary>
